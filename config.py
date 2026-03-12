@@ -91,7 +91,7 @@ class Settings(BaseSettings):
     )
 
     # ── Polygon RPC ─────────────────────────────────────────
-    polygon_rpc_url: str = Field(default="https://polygon-rpc.com")
+    polygon_rpc_url: str = Field(default="https://polygon.llamarpc.com")
     usdc_contract: str = Field(
         default="0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
     )
