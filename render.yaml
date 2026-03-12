@@ -1,0 +1,25 @@
+services:
+  - type: worker
+    name: polybot
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py --markets-file markets.json --loop --interval 300
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.12
+      - key: PRIVATE_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: POLY_API_KEY
+        sync: false
+      - key: POLY_API_SECRET
+        sync: false
+      - key: POLY_API_PASSPHRASE
+        sync: false
+      - key: EDGE_THRESHOLD
+        value: "0.10"
+      - key: MAX_RISK_PCT
+        value: "0.02"
+      - key: KELLY_MULTIPLIER
+        value: "0.25"
