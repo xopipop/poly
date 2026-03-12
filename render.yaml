@@ -1,6 +1,7 @@
 services:
-  - type: worker
+  - type: web
     name: polybot
+    plan: free
     runtime: python
     buildCommand: pip install -r requirements.txt
     startCommand: python main.py --markets-file markets.json --loop --interval 300

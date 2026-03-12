@@ -29,9 +29,11 @@ from __future__ import annotations
 
 import argparse
 import asyncio
-import json
 import signal
 import sys
+import os
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -417,6 +419,24 @@ async def run_pipeline(
     )
 
 
+# ── Render Free Tier Health Check Server ────────────────────
+
+class HealthCheckHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header("Content-type", "text/plain")
+        self.end_headers()
+        self.wfile.write(b"Bot is alive")
+
+    def log_message(self, format, *args):
+        # Silence standard HTTP logs to keep polybot.log clean
+        return
+
+def run_health_server(port: int):
+    server = HTTPServer(("0.0.0.0", port), HealthCheckHandler)
+    logger.info("health_server_started", port=port)
+    server.serve_forever()
+
 # ═══════════════════════════════════════════════════════════
 #  Main entry point
 # ═══════════════════════════════════════════════════════════
@@ -424,6 +444,11 @@ async def run_pipeline(
 
 async def main(args: argparse.Namespace) -> None:
     """Boot all modules and run the pipeline loop."""
+
+    # Start health check server for Render Free Tier if PORT is provided
+    port = os.environ.get("PORT")
+    if port:
+        threading.Thread(target=run_health_server, args=(int(port),), daemon=True).start()
 
     # ── Load config ─────────────────────────────────────────
     try:
