@@ -299,7 +299,7 @@ async def run_pipeline(
     logger.info("pipeline_step", step="2_data_ingestion")
     news = await collect_news(
         query=market.question,
-        news_api_key=settings.news_api_key,
+        tavily_api_key=settings.tavily_api_key,
     )
 
     if not news:

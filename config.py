@@ -57,6 +57,7 @@ class Settings(BaseSettings):
 
     # ── News API ────────────────────────────────────────────
     news_api_key: str = Field(default="", description="newsapi.org API key")
+    tavily_api_key: str = Field(default="", description="tavily.com API key")
 
     # ── Risk management ─────────────────────────────────────
     max_risk_pct: float = Field(
