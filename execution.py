@@ -106,7 +106,7 @@ class PolymarketExecutor:
         executor = PolymarketExecutor(
             private_key="abcdef...",
             host="https://clob.polymarket.com",
-            polygon_rpc="https://polygon.llamarpc.com",
+            polygon_rpc="https://polygon.drpc.org",
             usdc_address="0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
         )
         await executor.initialize()          # L1 → L2 auth
@@ -119,7 +119,7 @@ class PolymarketExecutor:
         private_key: str,
         host: str = "https://clob.polymarket.com",
         chain_id: int = POLYGON,
-        polygon_rpc: str = "https://polygon.llamarpc.com",
+        polygon_rpc: str = "https://polygon.drpc.org",
         usdc_address: str = "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
         proxy_wallet: str | None = None,
         poly_api_key: str | None = None,

@@ -91,7 +91,7 @@ async def fetch_duckduckgo(
         logger.error("duckduckgo_timeout", query=query[:80])
         return []
     except Exception as exc:
-        logger.error("duckduckgo_error", error=str(exc), query=query[:80])
+        logger.error("duckduckgo_error", error=repr(exc), query=query[:80])
         return []
 
     items: list[NewsItem] = []
@@ -158,7 +158,7 @@ async def fetch_news_api(
         ) as resp:
             if resp.status != 200:
                 body = await resp.text()
-                logger.error("news_api_error", status=resp.status, body=body[:300])
+                logger.warning("news_api_warning", status=resp.status, body=body[:300])
                 return []
 
             data = await resp.json()
