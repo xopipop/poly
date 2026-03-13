@@ -170,19 +170,19 @@ def load_markets_file(path: str) -> list[MarketConfig]:
 
 
 async def fetch_market_price(
-    condition_id: str,
-    gamma_api_url: str = "https://gamma-api.polymarket.com",
+    token_id_yes: str,
+    clob_api_url: str = "https://clob.polymarket.com",
     *,
     session: aiohttp.ClientSession | None = None,
 ) -> dict[str, float]:
-    """Query the Polymarket Gamma API for current market prices.
+    """Query the Polymarket CLOB API midpoint for current market prices.
 
     Parameters
     ----------
-    condition_id : str
-        The market's condition ID (hex string).
-    gamma_api_url : str
-        Gamma API base URL.
+    token_id_yes : str
+        The market's YES outcome token ID.
+    clob_api_url : str
+        CLOB API base URL.
 
     Returns
     -------
@@ -190,8 +190,8 @@ async def fetch_market_price(
         ``{"yes": float, "no": float}``  — current prices.
         Falls back to ``{"yes": 0.5, "no": 0.5}`` on error.
     """
-    url = f"{gamma_api_url}/markets"
-    params = {"condition_id": condition_id}
+    url = f"{clob_api_url}/midpoint"
+    params = {"token_id": token_id_yes}
     fallback = {"yes": 0.5, "no": 0.5}
 
     own_session = session is None
@@ -206,53 +206,34 @@ async def fetch_market_price(
             if resp.status != 200:
                 body = await resp.text()
                 logger.error(
-                    "gamma_api_error",
+                    "clob_api_error",
                     status=resp.status,
                     body=body[:300],
                 )
                 return fallback
 
-            data: list[dict[str, Any]] = await resp.json()
+            data = await resp.json()
 
-        if not data:
-            logger.warning(
-                "gamma_api_empty",
-                condition_id=condition_id[:16],
-            )
-            return fallback
-
-        market = data[0]
-
-        # Gamma API returns prices in tokens array or as outcomePrices
-        outcome_prices = market.get("outcomePrices", [])
-        if isinstance(outcome_prices, str):
-            try:
-                outcome_prices = json.loads(outcome_prices)
-            except json.JSONDecodeError:
-                outcome_prices = []
-
-        if outcome_prices and len(outcome_prices) >= 2:
-            yes_price = float(outcome_prices[0])
-            no_price = float(outcome_prices[1])
-        else:
-            # Fallback: try bestBid/bestAsk or default
-            yes_price = float(market.get("bestBid", 0.5))
-            no_price = 1.0 - yes_price
+        mid_price = float(data.get("mid", 0.5))
+        
+        # Round to 4 decimal places
+        yes_price = round(mid_price, 4)
+        no_price = round(1.0 - mid_price, 4)
 
         prices = {"yes": yes_price, "no": no_price}
         logger.info(
-            "gamma_price",
-            condition_id=condition_id[:16] + "...",
+            "clob_price",
+            token_id=token_id_yes[:16] + "...",
             yes=f"${yes_price:.4f}",
             no=f"${no_price:.4f}",
         )
         return prices
 
     except (aiohttp.ClientError, asyncio.TimeoutError) as exc:
-        logger.error("gamma_api_network_error", error=str(exc))
+        logger.error("clob_api_network_error", error=str(exc))
         return fallback
     except Exception as exc:
-        logger.error("gamma_api_unexpected_error", error=str(exc))
+        logger.error("clob_api_unexpected_error", error=str(exc))
         return fallback
     finally:
         if own_session:
@@ -298,11 +279,10 @@ async def run_pipeline(
         condition_id=market.condition_id[:16] + "...",
     )
 
-    # ── 1. Current market price via Gamma API ───────────────
-    logger.info("pipeline_step", step="1_gamma_price")
+    # ── 1. Current market price via CLOB Midpoint ───────────
+    logger.info("pipeline_step", step="1_clob_price")
     prices = await fetch_market_price(
-        market.condition_id,
-        gamma_api_url=settings.gamma_api_url,
+        token_id_yes=market.token_id_yes,
     )
     market_price_yes = prices["yes"]
 
