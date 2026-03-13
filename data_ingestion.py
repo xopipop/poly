@@ -63,11 +63,11 @@ async def fetch_duckduckgo(
         Found articles; empty list on any error.
     """
     try:
-        from duckduckgo_search import DDGS
+        from ddgs import DDGS
     except ImportError:
         logger.error(
-            "duckduckgo_import_error",
-            hint="pip install duckduckgo-search",
+            "ddgs_import_error",
+            hint="pip install ddgs",
         )
         return []
 
