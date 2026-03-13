@@ -225,6 +225,12 @@ async def fetch_market_price(
 
         # Gamma API returns prices in tokens array or as outcomePrices
         outcome_prices = market.get("outcomePrices", [])
+        if isinstance(outcome_prices, str):
+            try:
+                outcome_prices = json.loads(outcome_prices)
+            except json.JSONDecodeError:
+                outcome_prices = []
+
         if outcome_prices and len(outcome_prices) >= 2:
             yes_price = float(outcome_prices[0])
             no_price = float(outcome_prices[1])
