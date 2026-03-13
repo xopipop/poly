@@ -79,8 +79,8 @@ class Settings(BaseSettings):
         description="Fractional Kelly multiplier (0.25 = quarter-Kelly)",
     )
     min_bet_usd: float = Field(
-        default=0.50,
-        ge=0.10,
+        default=0.10,
+        ge=0.01,
         description="Minimum dollar volume allowed for a trade",
     )
     polygon_fee: float = Field(

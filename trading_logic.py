@@ -163,7 +163,7 @@ def compute_position_size(
     *,
     kelly_multiplier: float = 0.25,
     max_risk_pct: float = 0.02,
-    min_bet_usd: float = 0.5,
+    min_bet_usd: float = 0.10,
 ) -> tuple[float, float, float]:
     """Calculate the dollar size of a bet with risk controls.
 
@@ -252,7 +252,7 @@ def generate_signal(
     edge_threshold: float = 0.10,
     kelly_multiplier: float = 0.25,
     max_risk_pct: float = 0.02,
-    min_bet_usd: float = 0.50,
+    min_bet_usd: float = 0.10,
     polygon_fee: float = 0.0002,
     reasoning: str = "",
 ) -> TradeSignal:
