@@ -91,7 +91,7 @@ async def fetch_duckduckgo(
         logger.error("duckduckgo_timeout", query=query[:80])
         return []
     except Exception as exc:
-        logger.error("duckduckgo_error", error=repr(exc), query=query[:80])
+        logger.warning("duckduckgo_warning", error=repr(exc), query=query[:80])
         return []
 
     items: list[NewsItem] = []

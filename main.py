@@ -205,11 +205,14 @@ async def fetch_market_price(
         ) as resp:
             if resp.status != 200:
                 body = await resp.text()
-                logger.error(
-                    "clob_api_error",
-                    status=resp.status,
-                    body=body[:300],
-                )
+                if resp.status == 404:
+                    logger.warning("clob_price_not_found", token_id=token_id_yes)
+                else:
+                    logger.error(
+                        "clob_api_error",
+                        status=resp.status,
+                        body=body[:300],
+                    )
                 return fallback
 
             data = await resp.json()
@@ -476,6 +479,7 @@ async def main(args: argparse.Namespace) -> None:
         model=settings.openai_model,
     )
 
+    logger.info("executor_init", rpc_url=settings.polygon_rpc_url)
     executor = PolymarketExecutor(
         private_key=settings.private_key,
         host=settings.polymarket_host,

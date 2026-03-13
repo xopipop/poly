@@ -129,7 +129,7 @@ class PolymarketExecutor:
         self._private_key = private_key
         self._host = host
         self._chain_id = chain_id
-        self._polygon_rpc = polygon_rpc
+        self._polygon_rpc = polygon_rpc if (polygon_rpc and polygon_rpc.strip()) else "https://polygon.drpc.org"
         self._usdc_address = usdc_address
         self._proxy_wallet = proxy_wallet
 
