@@ -76,7 +76,7 @@ async def fetch_duckduckgo(
         with DDGS() as ddgs:
             return list(
                 ddgs.news(
-                    keywords=query,
+                    query,
                     max_results=max_results,
                     timelimit=time_filter,
                 )
