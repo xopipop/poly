@@ -107,6 +107,12 @@ class Settings(BaseSettings):
     def _strip_0x(cls, v: str) -> str:
         return v.removeprefix("0x").strip()
 
+    @field_validator("polygon_rpc_url", mode="before")
+    @classmethod
+    def _fallback_rpc(cls, v: str) -> str:
+        if not v or not v.strip():
+            return "https://polygon.drpc.org"
+        return v
 
 def load_settings() -> Settings:
     """Load and validate settings.  Raises ``ValidationError`` early
