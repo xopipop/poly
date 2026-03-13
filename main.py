@@ -341,6 +341,7 @@ async def run_pipeline(
         edge_threshold=settings.edge_threshold,
         kelly_multiplier=settings.kelly_multiplier,
         max_risk_pct=settings.max_risk_pct,
+        min_bet_usd=settings.min_bet_usd,
         polygon_fee=settings.polygon_fee,
         reasoning=analysis.reasoning,
     )

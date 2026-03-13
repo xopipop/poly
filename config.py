@@ -60,9 +60,9 @@ class Settings(BaseSettings):
 
     # ── Risk management ─────────────────────────────────────
     max_risk_pct: float = Field(
-        default=0.02,
+        default=0.10,
         ge=0.001,
-        le=0.10,
+        le=0.20,
         description="Max fraction of bankroll per trade (Kelly cap)",
     )
     edge_threshold: float = Field(
@@ -76,6 +76,11 @@ class Settings(BaseSettings):
         ge=0.05,
         le=1.0,
         description="Fractional Kelly multiplier (0.25 = quarter-Kelly)",
+    )
+    min_bet_usd: float = Field(
+        default=0.50,
+        ge=0.10,
+        description="Minimum dollar volume allowed for a trade",
     )
     polygon_fee: float = Field(
         default=0.0002,

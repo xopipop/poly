@@ -163,7 +163,7 @@ def compute_position_size(
     *,
     kelly_multiplier: float = 0.25,
     max_risk_pct: float = 0.02,
-    min_bet_usd: float = 1.0,
+    min_bet_usd: float = 0.5,
 ) -> tuple[float, float, float]:
     """Calculate the dollar size of a bet with risk controls.
 
@@ -252,6 +252,7 @@ def generate_signal(
     edge_threshold: float = 0.10,
     kelly_multiplier: float = 0.25,
     max_risk_pct: float = 0.02,
+    min_bet_usd: float = 0.50,
     polygon_fee: float = 0.0002,
     reasoning: str = "",
 ) -> TradeSignal:
@@ -273,6 +274,8 @@ def generate_signal(
         Fractional Kelly multiplier (e.g. 0.25).
     max_risk_pct : float
         Hard cap per trade as fraction of bankroll.
+    min_bet_usd : float
+        Minimum meaningful bet (below this → skip).
     polygon_fee : float
         Estimated Polygon transaction cost per $1 bet.
     reasoning : str
@@ -343,6 +346,7 @@ def generate_signal(
         confidence=confidence,
         kelly_multiplier=kelly_multiplier,
         max_risk_pct=max_risk_pct,
+        min_bet_usd=min_bet_usd,
     )
 
     if order_size <= 0:
